@@ -1,0 +1,105 @@
+info:
+  component: Edge Server
+
+spring:
+  application:
+    name: api-gateway
+
+  http:
+    multipart:
+      enabled: false
+
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      retry:
+        initialInterval: 5000
+        maxInterval: 10000
+        maxAttempts: 10
+    loadbalancer:
+      retry:
+        enabled: true
+
+endpoints:
+  restart:
+    enabled: true
+  shutdown:
+    enabled: true
+  health:
+    sensitive: false
+
+zuul:
+  prefix: /portal-api
+  retryable: true
+  host:
+    maxTotalConnections: 1000
+    maxPerRouteConnections: 1000
+    connect-timeout-millis: 500000
+    socket-timeout-millis: 500000
+  semaphore:
+    max-semaphores: 2000
+
+ribbon:
+  ConnectTimeout: 500000
+  ReadTimeout: 500000
+  MaxAutoRetries: 3
+  MaxAutoRetriesNextServer: 3
+  OkToRetryOnAllOperations: true
+  consul:
+    enabled: true
+  okhttp:
+    enabled: true
+
+feign:
+  okhttp:
+    enabled: true
+  hystrix:
+    enabled: true
+  client:
+    config:
+      default:
+        connectTimeout: 500000
+        readTimeout: 500000
+
+server:
+  port: 8765
+  compression:
+      enabled: true
+      mime-types:
+        - application/json
+        - application/xml
+        - application/xhtml+xml
+        - text/html
+        - text/xml
+        - text/plain
+  undertow:
+    io-threads: 10
+    worker-threads: 10
+
+
+logging:
+  level:
+    ROOT: INFO
+    org.springframework.web: DEBUG
+
+hystrix:
+  threadpool:
+    default:
+      coreSize: 10
+      maximumSize: 20
+      queueSizeRejectionThreshold: -1
+      maxQueueSize: -1
+  command:
+    default:
+      execution:
+        timeout:
+          enabled: false
+        isolation:
+          strategy: THREAD
+
+management:
+  health:
+    consul:
+      enabled: false
+
